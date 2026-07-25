@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
+import OverviewTab from '../components/database/OverviewTab';
 import RequirementEditor from '../components/database/RequirementEditor';
-import AnalysisViewer from '../components/database/AnalysisViewer';
 import EntityEditor from '../components/database/EntityEditor';
 import RelationshipEditor from '../components/database/RelationshipEditor';
 import SchemaViewer from '../components/database/SchemaViewer';
@@ -15,6 +15,7 @@ import VersionHistory from '../components/database/VersionHistory';
 import ExportModal from '../components/database/ExportModal';
 import { projectApi, databaseApi, ensureDemoAuth } from '../api/client';
 import {
+  LayoutDashboard,
   FileText,
   Layers,
   Network,
@@ -28,13 +29,11 @@ import {
   Save,
   Download,
   ArrowLeft,
-  CheckCircle2,
-  AlertCircle
+  RefreshCw
 } from 'lucide-react';
 
 const STAGES = [
-  { id: 'requirement', name: 'Requirement', icon: FileText },
-  { id: 'analysis', name: 'Analysis', icon: Sparkles },
+  { id: 'overview', name: 'Overview', icon: LayoutDashboard },
   { id: 'entities', name: 'Entities', icon: Layers },
   { id: 'relationships', name: 'Relationships', icon: Network },
   { id: 'schema', name: 'Schema', icon: Table },
@@ -42,6 +41,7 @@ const STAGES = [
   { id: 'sql', name: 'SQL', icon: Code },
   { id: 'validation', name: 'Validation', icon: ShieldCheck },
   { id: 'review', name: 'AI Review', icon: Sparkles },
+  { id: 'requirement', name: 'Prompt', icon: FileText },
   { id: 'indexes', name: 'Indexes', icon: Zap },
   { id: 'versions', name: 'Versions', icon: History }
 ];
@@ -51,13 +51,12 @@ export default function Workspace() {
   const navigate = useNavigate();
 
   const [project, setProject] = useState(null);
-  const [activeTab, setActiveTab] = useState('requirement');
+  const [activeTab, setActiveTab] = useState('overview');
   const [isLoading, setIsLoading] = useState(true);
-  const [saveState, setSaveState] = useState('Saved'); // 'Saving...' | 'Saved' | 'Unsaved Changes' | 'Save Failed'
+  const [saveState, setSaveState] = useState('Saved');
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [stageStatuses, setStageStatuses] = useState({
-    requirement: 'Completed',
-    analysis: 'Completed',
+    overview: 'Completed',
     entities: 'Completed',
     relationships: 'Completed',
     schema: 'Completed',
@@ -65,6 +64,7 @@ export default function Workspace() {
     sql: 'Completed',
     validation: 'Completed',
     review: 'Completed',
+    requirement: 'Completed',
     indexes: 'Completed',
     versions: 'Completed'
   });
@@ -89,7 +89,6 @@ export default function Workspace() {
     }
   };
 
-  // Re-analyze requirement handler
   const handleReanalyzeRequirement = async ({ requirement, databaseType }) => {
     setIsLoading(true);
     setSaveState('Saving...');
@@ -99,9 +98,9 @@ export default function Workspace() {
         requirement,
         databaseType
       });
-      if (res.analysis) {
+      if (res.projectId) {
         await loadProjectData();
-        setActiveTab('analysis');
+        setActiveTab('overview');
         markDownstreamOutdated('requirement');
         setSaveState('Saved');
       }
@@ -113,7 +112,6 @@ export default function Workspace() {
     }
   };
 
-  // Save Entities handler
   const handleSaveEntities = async (entities) => {
     setIsLoading(true);
     setSaveState('Saving...');
@@ -133,7 +131,6 @@ export default function Workspace() {
     }
   };
 
-  // Save Relationships handler
   const handleSaveRelationships = async (relationships) => {
     setIsLoading(true);
     setSaveState('Saving...');
@@ -153,7 +150,6 @@ export default function Workspace() {
     }
   };
 
-  // Regenerate Schema
   const handleRegenerateSchema = async () => {
     setIsLoading(true);
     try {
@@ -169,7 +165,6 @@ export default function Workspace() {
     }
   };
 
-  // Regenerate SQL script
   const handleRegenerateSql = async (dialect) => {
     setIsLoading(true);
     try {
@@ -183,7 +178,6 @@ export default function Workspace() {
     }
   };
 
-  // Validate Schema
   const handleValidateSchema = async () => {
     setIsLoading(true);
     try {
@@ -197,11 +191,10 @@ export default function Workspace() {
     }
   };
 
-  // Safe Auto-Fix
   const handleSafeAutoFix = async () => {
     setIsLoading(true);
     try {
-      const res = await databaseApi.safeAutoFix({ projectId });
+      await databaseApi.safeAutoFix({ projectId });
       await databaseApi.generateSql({ projectId });
       await loadProjectData();
       alert('Safe auto fixes applied successfully.');
@@ -212,16 +205,17 @@ export default function Workspace() {
     }
   };
 
-  // Dependency Tracking Helper
   const markDownstreamOutdated = (fromStage) => {
     setStageStatuses(prev => {
       const updated = { ...prev };
-      if (fromStage === 'requirement' || fromStage === 'entities' || fromStage === 'relationships') {
+      if (fromStage === 'requirement' || fromStage === 'entities') {
+        updated.relationships = 'Check Required';
         updated.schema = 'Outdated';
         updated.er = 'Outdated';
         updated.sql = 'Outdated';
         updated.validation = 'Outdated';
-      } else if (fromStage === 'schema') {
+      } else if (fromStage === 'relationships') {
+        updated.schema = 'Outdated';
         updated.er = 'Outdated';
         updated.sql = 'Outdated';
         updated.validation = 'Outdated';
@@ -235,16 +229,16 @@ export default function Workspace() {
       <div className="min-h-screen bg-[#0b0f17] flex items-center justify-center text-white text-xs">
         <div className="flex items-center space-x-3">
           <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <span>Opening Database Designer Workspace...</span>
+          <span>Opening Complete Database Workspace...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <AppLayout title={project?.name || 'Database Design Workspace'}>
+    <AppLayout title={project?.name || 'Database Workspace'}>
       <div className="space-y-4 flex flex-col h-full">
-        {/* Top Header Bar */}
+        {/* Workspace Top Header Bar */}
         <div className="flex flex-wrap items-center justify-between bg-[#111827] border border-gray-800 rounded-xl p-3.5 gap-3">
           <div className="flex items-center space-x-3">
             <button
@@ -266,7 +260,7 @@ export default function Workspace() {
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* Autosave Badge */}
+            {/* Autosave Status */}
             <div className="flex items-center space-x-1.5 text-xs text-gray-400 font-mono">
               <span className={`w-2 h-2 rounded-full ${
                 saveState === 'Saved' ? 'bg-emerald-400' :
@@ -290,12 +284,12 @@ export default function Workspace() {
               className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-lg shadow-indigo-600/30 transition disabled:opacity-50"
             >
               <Save className="w-3.5 h-3.5" />
-              <span>Save</span>
+              <span>Save Design</span>
             </button>
           </div>
         </div>
 
-        {/* Progress / Stage Tracker Tabs Navigation */}
+        {/* Tab Navigation */}
         <div className="flex items-center space-x-1 bg-[#111827] border border-gray-800 rounded-xl p-1.5 overflow-x-auto text-xs font-medium">
           {STAGES.map((stg) => {
             const Icon = stg.icon;
@@ -322,21 +316,10 @@ export default function Workspace() {
           })}
         </div>
 
-        {/* Workspace Tab Content Rendering */}
+        {/* Workspace Tab Rendering */}
         <div className="flex-1 bg-[#0b0f17] pt-2">
-          {activeTab === 'requirement' && (
-            <RequirementEditor
-              project={project}
-              onReanalyze={handleReanalyzeRequirement}
-              isLoading={isLoading}
-            />
-          )}
-
-          {activeTab === 'analysis' && (
-            <AnalysisViewer
-              analysis={project?.requirement?.analysis}
-              onContinue={() => setActiveTab('entities')}
-            />
+          {activeTab === 'overview' && (
+            <OverviewTab project={project} />
           )}
 
           {activeTab === 'entities' && (
@@ -403,6 +386,14 @@ export default function Workspace() {
                   setIsLoading(false);
                 }
               }}
+              isLoading={isLoading}
+            />
+          )}
+
+          {activeTab === 'requirement' && (
+            <RequirementEditor
+              project={project}
+              onReanalyze={handleReanalyzeRequirement}
               isLoading={isLoading}
             />
           )}
