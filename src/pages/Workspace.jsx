@@ -374,19 +374,8 @@ export default function Workspace() {
 
           {activeTab === 'review' && (
             <AISuggestions
-              suggestions={[]}
-              onReviewAi={async () => {
-                setIsLoading(true);
-                try {
-                  const res = await databaseApi.reviewAi({ projectId });
-                  alert(`AI Database Audit complete: Found ${res.suggestions?.length || 0} optimization recommendations.`);
-                } catch (err) {
-                  alert(`AI Review failed: ${err.message}`);
-                } finally {
-                  setIsLoading(false);
-                }
-              }}
-              isLoading={isLoading}
+              projectId={projectId}
+              onModifyComplete={loadProjectData}
             />
           )}
 

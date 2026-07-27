@@ -80,6 +80,10 @@ export const databaseApi = {
   validateSchema: (data) => api.post('/database/validate', data),
   safeAutoFix: (data) => api.post('/database/safe-autofix', data),
   reviewAi: (data) => api.post('/database/review-ai', data),
+  modifyAi: (data) => api.post('/database/modify-ai', data),
+  getAiReviews: (projectId) => api.get(`/database/ai-reviews/${projectId}`),
+  deleteAiReview: (id) => api.delete(`/database/ai-reviews/${id}`),
+  clearAiReviews: (projectId) => api.delete(`/database/ai-reviews/clear/${projectId}`),
   getIndexRecommendations: (projectId) => api.get(`/database/indexes/${projectId}`)
 };
 
