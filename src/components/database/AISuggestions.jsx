@@ -12,11 +12,12 @@ import {
   ChevronUp,
   TrendingDown,
   Trash2,
-  Wand2
+  Wand2,
+  GitCompare
 } from 'lucide-react';
 import { databaseApi } from '../../api/client';
 
-export default function AISuggestions({ projectId, onModifyComplete }) {
+export default function AISuggestions({ projectId, onModifyComplete, onNavigateTab }) {
   const [history, setHistory] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
@@ -287,17 +288,28 @@ export default function AISuggestions({ projectId, onModifyComplete }) {
 
       {/* Modify Success Notification Banner */}
       {!isLoadingHistory && !isModifying && modifySuccess && (
-        <div className="bg-emerald-950/40 border border-emerald-800/60 rounded-xl p-4 flex items-center justify-between gap-3">
+        <div className="bg-emerald-950/40 border border-emerald-800/60 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center space-x-3 text-xs">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <p className="font-bold text-emerald-300">{modifySuccess}</p>
           </div>
-          <button
-            onClick={() => setModifySuccess(null)}
-            className="text-gray-400 hover:text-white text-xs font-mono cursor-pointer"
-          >
-            Dismiss
-          </button>
+          <div className="flex items-center space-x-2">
+            {onNavigateTab && (
+              <button
+                onClick={() => onNavigateTab('diff')}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer shadow"
+              >
+                <GitCompare className="w-3.5 h-3.5" />
+                <span>View Modify Diff</span>
+              </button>
+            )}
+            <button
+              onClick={() => setModifySuccess(null)}
+              className="text-gray-400 hover:text-white text-xs font-mono cursor-pointer px-2"
+            >
+              Dismiss
+            </button>
+          </div>
         </div>
       )}
 

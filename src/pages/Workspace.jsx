@@ -10,6 +10,7 @@ import ERDiagramCanvas from '../components/database/ERDiagramCanvas';
 import SQLViewer from '../components/database/SQLViewer';
 import ValidationPanel from '../components/database/ValidationPanel';
 import AISuggestions from '../components/database/AISuggestions';
+import ModifyDiffTab from '../components/database/ModifyDiffTab';
 import IndexRecommendations from '../components/database/IndexRecommendations';
 import VersionHistory from '../components/database/VersionHistory';
 import ExportModal from '../components/database/ExportModal';
@@ -29,7 +30,8 @@ import {
   Save,
   Download,
   ArrowLeft,
-  RefreshCw
+  RefreshCw,
+  GitCompare
 } from 'lucide-react';
 
 const STAGES = [
@@ -41,6 +43,7 @@ const STAGES = [
   { id: 'sql', name: 'SQL', icon: Code },
   { id: 'validation', name: 'Validation', icon: ShieldCheck },
   { id: 'review', name: 'AI Review', icon: Sparkles },
+  { id: 'diff', name: 'Modify Diff', icon: GitCompare },
   { id: 'requirement', name: 'Prompt', icon: FileText },
   { id: 'indexes', name: 'Indexes', icon: Zap },
   { id: 'versions', name: 'Versions', icon: History }
@@ -376,6 +379,14 @@ export default function Workspace() {
             <AISuggestions
               projectId={projectId}
               onModifyComplete={loadProjectData}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+            />
+          )}
+
+          {activeTab === 'diff' && (
+            <ModifyDiffTab
+              projectId={projectId}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
