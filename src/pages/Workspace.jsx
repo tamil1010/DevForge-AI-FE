@@ -400,9 +400,11 @@ export default function Workspace() {
 
           {activeTab === 'indexes' && (
             <IndexRecommendations
-              recommendations={[]}
+              projectId={projectId}
+              schema={project?.schema}
+              isOutdated={stageStatuses.indexes === 'Outdated' || stageStatuses.schema === 'Outdated'}
               onApplyIndex={(rec) => {
-                alert(`Added index ${rec.sql} to SQL configuration.`);
+                console.log('Applied index to SQL configuration:', rec);
               }}
             />
           )}

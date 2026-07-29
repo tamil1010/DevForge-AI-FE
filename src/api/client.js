@@ -85,7 +85,9 @@ export const databaseApi = {
   getAiReviews: (projectId) => api.get(`/database/ai-reviews/${projectId}`),
   deleteAiReview: (id) => api.delete(`/database/ai-reviews/${id}`),
   clearAiReviews: (projectId) => api.delete(`/database/ai-reviews/clear/${projectId}`),
-  getIndexRecommendations: (projectId) => api.get(`/database/indexes/${projectId}`)
+  getIndexRecommendations: (projectId) => api.get(`/database/indexes/${projectId}`),
+  saveIndexState: (data) => api.post('/database/indexes/save', data),
+  runAiIndexAnalysis: (data) => api.post('/database/indexes/analyze-ai', data)
 };
 
 export const versionApi = {
