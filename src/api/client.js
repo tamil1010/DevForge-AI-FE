@@ -23,6 +23,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('devforge_token');
+    }
     const message = error.response?.data?.message || error.message || 'An unexpected API error occurred.';
     return Promise.reject(new Error(message));
   }
@@ -31,7 +34,14 @@ api.interceptors.response.use(
 // Demo auto-login helper to ensure zero-friction user experience
 export const ensureDemoAuth = async () => {
   let token = localStorage.getItem('devforge_token');
-  if (token) return token;
+  if (token) {
+    try {
+      await axios.get('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+      return token;
+    } catch (e) {
+      localStorage.removeItem('devforge_token');
+    }
+  }
 
   try {
     const res = await axios.post('/api/auth/login', {
