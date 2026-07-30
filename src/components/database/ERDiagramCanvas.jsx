@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   ReactFlow,
   MiniMap,
@@ -6,7 +6,9 @@ import {
   Background,
   useNodesState,
   useEdgesState,
-  MarkerType
+  MarkerType,
+  Handle,
+  Position
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Key, Link as LinkIcon, Maximize2, Minimize2, RefreshCw } from 'lucide-react';
@@ -14,7 +16,8 @@ import { Key, Link as LinkIcon, Maximize2, Minimize2, RefreshCw } from 'lucide-r
 // Custom Table Node Component for React Flow canvas
 const TableNode = ({ data }) => {
   return (
-    <div className="bg-[#111827] border-2 border-indigo-500/80 rounded-xl overflow-hidden shadow-2xl min-w-[200px] text-xs font-mono">
+    <div className="bg-[#111827] border-2 border-indigo-500/80 rounded-xl overflow-hidden shadow-2xl min-w-[200px] text-xs font-mono relative">
+      <Handle type="target" position={Position.Left} className="!w-3 !h-3 !bg-indigo-500 border-2 border-[#111827]" />
       <div className="px-3 py-2 bg-indigo-900/40 border-b border-indigo-500/40 font-bold text-white uppercase tracking-wider text-center flex items-center justify-between">
         <span>{data.label}</span>
       </div>
@@ -35,6 +38,7 @@ const TableNode = ({ data }) => {
           </div>
         ))}
       </div>
+      <Handle type="source" position={Position.Right} className="!w-3 !h-3 !bg-indigo-500 border-2 border-[#111827]" />
     </div>
   );
 };
@@ -96,6 +100,11 @@ export default function ERDiagramCanvas({ schema, relationships = [] }) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+  }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   const onNodeClick = (event, node) => {
     setSelectedItem({ type: 'table', data: node.data });
