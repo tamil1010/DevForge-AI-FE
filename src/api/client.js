@@ -92,9 +92,10 @@ export const databaseApi = {
 
 export const versionApi = {
   getVersions: (projectId) => api.get(`/versions/${projectId}`),
-  createVersion: (projectId) => api.post(`/versions/${projectId}`),
+  createVersion: (projectId, data) => api.post(`/versions/${projectId}`, data),
   compareVersions: (projectId, v1, v2) => api.get(`/versions/${projectId}/compare?v1=${v1}&v2=${v2}`),
-  restoreVersion: (projectId, versionNumber) => api.post(`/versions/${projectId}/restore/${versionNumber}`)
+  restoreVersion: (projectId, versionNumber) => api.post(`/versions/${projectId}/restore/${versionNumber}`),
+  deleteVersion: (projectId, versionNumber) => api.delete(`/versions/${projectId}/${versionNumber}`)
 };
 
 export default api;
