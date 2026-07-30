@@ -10,6 +10,7 @@ import ERDiagramCanvas from '../components/database/ERDiagramCanvas';
 import SQLViewer from '../components/database/SQLViewer';
 import ValidationPanel from '../components/database/ValidationPanel';
 import AISuggestions from '../components/database/AISuggestions';
+import ModifyDiffTab from '../components/database/ModifyDiffTab';
 import IndexRecommendations from '../components/database/IndexRecommendations';
 import VersionHistory from '../components/database/VersionHistory';
 import ExportModal from '../components/database/ExportModal';
@@ -29,7 +30,8 @@ import {
   Save,
   Download,
   ArrowLeft,
-  RefreshCw
+  RefreshCw,
+  GitCompare
 } from 'lucide-react';
 
 const STAGES = [
@@ -41,6 +43,7 @@ const STAGES = [
   { id: 'sql', name: 'SQL', icon: Code },
   { id: 'validation', name: 'Validation', icon: ShieldCheck },
   { id: 'review', name: 'AI Review', icon: Sparkles },
+  { id: 'diff', name: 'Modify Diff', icon: GitCompare },
   { id: 'requirement', name: 'Prompt', icon: FileText },
   { id: 'indexes', name: 'Indexes', icon: Zap },
   { id: 'versions', name: 'Versions', icon: History }
@@ -374,19 +377,16 @@ export default function Workspace() {
 
           {activeTab === 'review' && (
             <AISuggestions
-              suggestions={[]}
-              onReviewAi={async () => {
-                setIsLoading(true);
-                try {
-                  const res = await databaseApi.reviewAi({ projectId });
-                  alert(`AI Database Audit complete: Found ${res.suggestions?.length || 0} optimization recommendations.`);
-                } catch (err) {
-                  alert(`AI Review failed: ${err.message}`);
-                } finally {
-                  setIsLoading(false);
-                }
-              }}
-              isLoading={isLoading}
+              projectId={projectId}
+              onModifyComplete={loadProjectData}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+            />
+          )}
+
+          {activeTab === 'diff' && (
+            <ModifyDiffTab
+              projectId={projectId}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
@@ -400,9 +400,11 @@ export default function Workspace() {
 
           {activeTab === 'indexes' && (
             <IndexRecommendations
-              recommendations={[]}
+              projectId={projectId}
+              schema={project?.schema}
+              isOutdated={stageStatuses.indexes === 'Outdated' || stageStatuses.schema === 'Outdated'}
               onApplyIndex={(rec) => {
-                alert(`Added index ${rec.sql} to SQL configuration.`);
+                console.log('Applied index to SQL configuration:', rec);
               }}
             />
           )}

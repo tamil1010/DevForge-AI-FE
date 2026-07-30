@@ -80,14 +80,22 @@ export const databaseApi = {
   validateSchema: (data) => api.post('/database/validate', data),
   safeAutoFix: (data) => api.post('/database/safe-autofix', data),
   reviewAi: (data) => api.post('/database/review-ai', data),
-  getIndexRecommendations: (projectId) => api.get(`/database/indexes/${projectId}`)
+  modifyAi: (data) => api.post('/database/modify-ai', data),
+  getModifyDiff: (projectId) => api.get(`/database/modify-diff/${projectId}`),
+  getAiReviews: (projectId) => api.get(`/database/ai-reviews/${projectId}`),
+  deleteAiReview: (id) => api.delete(`/database/ai-reviews/${id}`),
+  clearAiReviews: (projectId) => api.delete(`/database/ai-reviews/clear/${projectId}`),
+  getIndexRecommendations: (projectId) => api.get(`/database/indexes/${projectId}`),
+  saveIndexState: (data) => api.post('/database/indexes/save', data),
+  runAiIndexAnalysis: (data) => api.post('/database/indexes/analyze-ai', data)
 };
 
 export const versionApi = {
   getVersions: (projectId) => api.get(`/versions/${projectId}`),
-  createVersion: (projectId) => api.post(`/versions/${projectId}`),
+  createVersion: (projectId, data) => api.post(`/versions/${projectId}`, data),
   compareVersions: (projectId, v1, v2) => api.get(`/versions/${projectId}/compare?v1=${v1}&v2=${v2}`),
-  restoreVersion: (projectId, versionNumber) => api.post(`/versions/${projectId}/restore/${versionNumber}`)
+  restoreVersion: (projectId, versionNumber) => api.post(`/versions/${projectId}/restore/${versionNumber}`),
+  deleteVersion: (projectId, versionNumber) => api.delete(`/versions/${projectId}/${versionNumber}`)
 };
 
 export default api;
