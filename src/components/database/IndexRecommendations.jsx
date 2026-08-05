@@ -709,7 +709,7 @@ export default function IndexRecommendations({
         /* INDEX CARDS LIST */
         /* ---------------------------------------------------- */
         <div className="space-y-4">
-          {filteredItems.map((rec) => {
+          {filteredItems.map((rec, idx) => {
             const isPk = rec.category === 'Primary Key';
             const isUq = rec.category === 'Unique';
             const isApplied = rec.status === 'Applied';
@@ -723,7 +723,7 @@ export default function IndexRecommendations({
 
             return (
               <div
-                key={rec.id}
+                key={`rec-${rec.id || 'rec'}-${idx}`}
                 className={`bg-[#111827] border rounded-2xl p-5 space-y-4 transition shadow-lg ${
                   isApplied ? 'border-emerald-800/50 bg-[#111827]/80' :
                   isIgnored ? 'border-gray-800/60 opacity-65' :
