@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -36,7 +38,7 @@ export const ensureDemoAuth = async () => {
   let token = localStorage.getItem('devforge_token');
   if (token) {
     try {
-      await axios.get('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+      await axios.get(`${API_BASE_URL}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
       return token;
     } catch (e) {
       localStorage.removeItem('devforge_token');
@@ -44,7 +46,7 @@ export const ensureDemoAuth = async () => {
   }
 
   try {
-    const res = await axios.post('/api/auth/login', {
+    const res = await axios.post(`${API_BASE_URL}/auth/login`, {
       email: 'demo@devforge.ai',
       password: 'password123'
     });
@@ -55,7 +57,7 @@ export const ensureDemoAuth = async () => {
   } catch (err) {
     // Register if login fails
     try {
-      const regRes = await axios.post('/api/auth/register', {
+      const regRes = await axios.post(`${API_BASE_URL}/auth/register`, {
         full_name: 'Demo Architect',
         email: 'demo@devforge.ai',
         password: 'password123',

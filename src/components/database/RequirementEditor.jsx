@@ -47,7 +47,6 @@ export default function RequirementEditor({ project, onReanalyze, isLoading }) {
                 <option value="PostgreSQL">PostgreSQL</option>
                 <option value="MySQL">MySQL</option>
                 <option value="SQLite">SQLite</option>
-                <option value="MongoDB">MongoDB</option>
               </select>
             </div>
             <div>
