@@ -171,9 +171,9 @@ export default function DesignerHome() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredProjects.map((proj) => (
+            {filteredProjects.map((proj, idx) => (
               <div
-                key={proj.id}
+                key={`proj-${proj.id || proj._id || 'item'}-${idx}`}
                 onClick={() => navigate(`/database-designer/${proj.id}`)}
                 className="bg-[#111827] border border-gray-800 hover:border-indigo-500/50 rounded-xl p-5 cursor-pointer transition shadow-sm hover:shadow-xl space-y-4 group flex flex-col justify-between"
               >
