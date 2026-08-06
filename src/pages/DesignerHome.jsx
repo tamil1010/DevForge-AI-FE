@@ -184,7 +184,12 @@ export default function DesignerHome() {
                     </span>
                     <span className="text-[10px] text-gray-500 flex items-center space-x-1 font-mono">
                       <Clock className="w-3 h-3" />
-                      <span>{new Date(proj.updated_at).toLocaleDateString()}</span>
+                      <span>{(() => {
+                        const dStr = proj.updated_at || proj.updatedAt || proj.created_at || proj.createdAt;
+                        if (!dStr) return 'Recently';
+                        const d = new Date(dStr);
+                        return isNaN(d.getTime()) ? 'Recently' : d.toLocaleDateString();
+                      })()}</span>
                     </span>
                   </div>
 

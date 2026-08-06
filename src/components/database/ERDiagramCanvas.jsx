@@ -47,43 +47,67 @@ const nodeTypes = {
   tableNode: TableNode
 };
 
-export default function ERDiagramCanvas({ schema, relationships = [] }) {
+export default function ERDiagramCanvas({ schema, relationships = [], entities = [] }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  // Generate Nodes and Edges from Schema
+  // Generate Nodes and Edges from Schema or Entities fallback
   const { initialNodes, initialEdges } = useMemo(() => {
-    if (!schema || !schema.tables) return { initialNodes: [], initialEdges: [] };
+    let tablesToRender = [];
+
+    if (schema && schema.tables && schema.tables.length > 0) {
+      tablesToRender = schema.tables;
+    } else if (entities && entities.length > 0) {
+      tablesToRender = entities.map(e => ({
+        name: e.name,
+        columns: (e.attributes || []).map(a => ({
+          name: a.name,
+          dataType: a.type || a.dataType || 'VARCHAR(255)',
+          isPrimaryKey: Boolean(a.primaryKey || a.is_primary_key),
+          isForeignKey: Boolean(a.foreignKey || a.is_foreign_key)
+        }))
+      }));
+    }
+
+    if (tablesToRender.length === 0) return { initialNodes: [], initialEdges: [] };
 
     const nodes = [];
     const edges = [];
+    const colsPerRow = Math.ceil(Math.sqrt(tablesToRender.length));
 
-    const colsPerRow = Math.ceil(Math.sqrt(schema.tables.length));
-
-    schema.tables.forEach((table, idx) => {
+    tablesToRender.forEach((table, idx) => {
       const row = Math.floor(idx / colsPerRow);
       const col = idx % colsPerRow;
+      const tName = table.name || table.tableName || `Table_${idx + 1}`;
 
       nodes.push({
-        id: table.name.toLowerCase(),
+        id: String(tName).toLowerCase(),
         type: 'tableNode',
         position: { x: col * 320 + 50, y: row * 280 + 50 },
         data: {
-          label: table.name,
-          columns: table.columns
+          label: tName,
+          columns: (table.columns || []).map(c => ({
+            ...c,
+            name: c.name || c.columnName || 'col',
+            dataType: c.dataType || c.type || 'VARCHAR(255)'
+          }))
         }
       });
     });
 
-    // Generate edges from FK references
-    schema.tables.forEach((table) => {
-      table.columns.forEach((col) => {
-        if (col.isForeignKey && col.references && col.references.table) {
-          const targetTable = col.references.table.toLowerCase();
-          const sourceTable = table.name.toLowerCase();
+    // Generate edges from FK references or relationships prop
+    tablesToRender.forEach((table) => {
+      const sourceTable = String(table.name || table.tableName || '').toLowerCase();
+      if (!sourceTable) return;
+
+      (table.columns || []).forEach((col) => {
+        const targetTableName = col.references ? (col.references.table || col.references.referencedTable) : null;
+        if (col.isForeignKey && targetTableName) {
+          const targetTable = String(targetTableName).toLowerCase();
+          const colName = col.name || col.columnName || 'fk';
 
           edges.push({
-            id: `edge_${sourceTable}_${targetTable}_${col.name}`,
+            id: `edge_${sourceTable}_${targetTable}_${colName}`,
             source: sourceTable,
             target: targetTable,
             label: '1 : N',
@@ -95,8 +119,26 @@ export default function ERDiagramCanvas({ schema, relationships = [] }) {
       });
     });
 
+    if (edges.length === 0 && relationships && relationships.length > 0) {
+      relationships.forEach((rel, idx) => {
+        const src = (rel.source || rel.from || '').toLowerCase();
+        const tgt = (rel.target || rel.to || '').toLowerCase();
+        if (src && tgt) {
+          edges.push({
+            id: `edge_rel_${idx}_${src}_${tgt}`,
+            source: src,
+            target: tgt,
+            label: rel.type || '1 : N',
+            style: { stroke: '#6366f1', strokeWidth: 2 },
+            markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' },
+            animated: true
+          });
+        }
+      });
+    }
+
     return { initialNodes: nodes, initialEdges: edges };
-  }, [schema]);
+  }, [schema, entities, relationships]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -114,10 +156,10 @@ export default function ERDiagramCanvas({ schema, relationships = [] }) {
     setSelectedItem({ type: 'edge', data: edge });
   };
 
-  if (!schema || !schema.tables || schema.tables.length === 0) {
+  if (nodes.length === 0) {
     return (
       <div className="bg-[#111827] border border-gray-800 rounded-xl p-12 text-center text-gray-400">
-        Generate the relational schema first to render the interactive ER Diagram.
+        Generate the relational schema or add entities first to render the interactive ER Diagram.
       </div>
     );
   }

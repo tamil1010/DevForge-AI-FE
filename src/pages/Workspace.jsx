@@ -354,6 +354,7 @@ export default function Workspace() {
             <ERDiagramCanvas
               schema={project?.schema}
               relationships={project?.relationships || []}
+              entities={project?.entities || []}
             />
           )}
 
