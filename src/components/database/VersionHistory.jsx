@@ -585,7 +585,7 @@ export default function VersionHistory({
                 <label className="block text-gray-300 font-semibold mb-1">Description</label>
                 <textarea
                   rows="3"
-                  placeholder="e.g. Initial AI generated database design with full schema, indexes, and AI review."
+                  placeholder="e.g. Initial AI generated database design with full schema, indexes, and AI chat assistant."
                   value={createForm.description}
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   className="w-full bg-[#0b0f17] border border-gray-800 rounded-xl p-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500"

@@ -9,7 +9,7 @@ import SchemaViewer from '../components/database/SchemaViewer';
 import ERDiagramCanvas from '../components/database/ERDiagramCanvas';
 import SQLViewer from '../components/database/SQLViewer';
 import ValidationPanel from '../components/database/ValidationPanel';
-import AISuggestions from '../components/database/AISuggestions';
+import AIChat from '../components/database/AIChat';
 import ModifyDiffTab from '../components/database/ModifyDiffTab';
 import IndexRecommendations from '../components/database/IndexRecommendations';
 import VersionHistory from '../components/database/VersionHistory';
@@ -31,7 +31,8 @@ import {
   Download,
   ArrowLeft,
   RefreshCw,
-  GitCompare
+  GitCompare,
+  MessageSquare
 } from 'lucide-react';
 
 const STAGES = [
@@ -42,7 +43,7 @@ const STAGES = [
   { id: 'er', name: 'ER Diagram', icon: GitBranch },
   { id: 'sql', name: 'SQL', icon: Code },
   { id: 'validation', name: 'Validation', icon: ShieldCheck },
-  { id: 'review', name: 'AI Review', icon: Sparkles },
+  { id: 'chat', name: 'AI Chat', icon: MessageSquare },
   { id: 'diff', name: 'Modify Diff', icon: GitCompare },
   { id: 'requirement', name: 'Prompt', icon: FileText },
   { id: 'indexes', name: 'Indexes', icon: Zap },
@@ -66,6 +67,7 @@ export default function Workspace() {
     er: 'Completed',
     sql: 'Completed',
     validation: 'Completed',
+    chat: 'Completed',
     review: 'Completed',
     requirement: 'Completed',
     indexes: 'Completed',
@@ -376,8 +378,8 @@ export default function Workspace() {
             />
           )}
 
-          {activeTab === 'review' && (
-            <AISuggestions
+          {(activeTab === 'chat' || activeTab === 'review') && (
+            <AIChat
               projectId={projectId}
               onModifyComplete={loadProjectData}
               onNavigateTab={(tab) => setActiveTab(tab)}
