@@ -50,9 +50,10 @@ export const ensureDemoAuth = async () => {
       email: 'demo@devforge.ai',
       password: 'password123'
     });
-    if (res.data?.token) {
-      localStorage.setItem('devforge_token', res.data.token);
-      return res.data.token;
+    const authToken = res.data?.token || res.token;
+    if (authToken) {
+      localStorage.setItem('devforge_token', authToken);
+      return authToken;
     }
   } catch (err) {
     // Register if login fails
@@ -63,15 +64,16 @@ export const ensureDemoAuth = async () => {
         password: 'password123',
         confirm_password: 'password123'
       });
-      if (regRes.data?.token) {
-        localStorage.setItem('devforge_token', regRes.data.token);
-        return regRes.data.token;
+      const authToken = regRes.data?.token || regRes.token;
+      if (authToken) {
+        localStorage.setItem('devforge_token', authToken);
+        return authToken;
       }
     } catch (e) {
       console.warn('Auto auth registration fallback handled:', e.message);
     }
   }
-  return null;
+  return localStorage.getItem('devforge_token');
 };
 
 export const projectApi = {
