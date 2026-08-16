@@ -29,13 +29,9 @@ import {
   Download,
   ArrowLeft,
   RefreshCw,
-<<<<<<< Updated upstream
-  GitCompare
-=======
   GitCompare,
   MessageSquare,
   Code2
->>>>>>> Stashed changes
 } from 'lucide-react';
 
 const STAGES = [
