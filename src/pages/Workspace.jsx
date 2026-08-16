@@ -29,7 +29,13 @@ import {
   Download,
   ArrowLeft,
   RefreshCw,
+<<<<<<< Updated upstream
   GitCompare
+=======
+  GitCompare,
+  MessageSquare,
+  Code2
+>>>>>>> Stashed changes
 } from 'lucide-react';
 
 const STAGES = [
@@ -268,6 +274,15 @@ export default function Workspace() {
               }`} />
               <span>{saveState}</span>
             </div>
+
+            <button
+              onClick={() => navigate(`/ai-code?importDbId=${projectId}`)}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-lg shadow-purple-600/30 transition"
+              title="Generate full application code from this database design in AI Code"
+            >
+              <Code2 className="w-3.5 h-3.5" />
+              <span>Open in AI Code</span>
+            </button>
 
             <button
               onClick={() => setIsExportOpen(true)}

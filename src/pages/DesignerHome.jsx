@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
 import NewProjectModal from '../components/database/NewProjectModal';
 import { projectApi, databaseApi, ensureDemoAuth } from '../api/client';
-import { Plus, Database, Sparkles, FolderKanban, Copy, Trash2, Edit2, ArrowRight, Clock } from 'lucide-react';
+import { Plus, Database, Sparkles, FolderKanban, Copy, Trash2, Edit2, ArrowRight, Clock, Code2 } from 'lucide-react';
 
 export default function DesignerHome() {
   const navigate = useNavigate();
@@ -207,6 +207,17 @@ export default function DesignerHome() {
                   </div>
 
                   <div className="flex items-center space-x-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/ai-code?importDbId=${proj.id}`);
+                      }}
+                      className="px-2 py-1 bg-purple-900/40 hover:bg-purple-800/60 text-purple-300 border border-purple-700/50 rounded text-[11px] font-medium flex items-center space-x-1 transition mr-1"
+                      title="Generate full application code from this database design in AI Code"
+                    >
+                      <Code2 className="w-3 h-3 text-purple-400" />
+                      <span>Open in AI Code</span>
+                    </button>
                     <button
                       onClick={(e) => handleRename(proj, e)}
                       className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded transition"
