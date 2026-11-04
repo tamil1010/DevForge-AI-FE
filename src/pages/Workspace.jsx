@@ -12,7 +12,6 @@ import ValidationPanel from '../components/database/ValidationPanel';
 import AIChat from '../components/database/AIChat';
 import ModifyDiffTab from '../components/database/ModifyDiffTab';
 import IndexRecommendations from '../components/database/IndexRecommendations';
-import VersionHistory from '../components/database/VersionHistory';
 import ExportModal from '../components/database/ExportModal';
 import { projectApi, databaseApi, ensureDemoAuth } from '../api/client';
 import {
@@ -26,13 +25,11 @@ import {
   ShieldCheck,
   Sparkles,
   Zap,
-  History,
   Save,
   Download,
   ArrowLeft,
   RefreshCw,
   GitCompare,
-  MessageSquare
 } from 'lucide-react';
 
 const STAGES = [
@@ -46,8 +43,7 @@ const STAGES = [
   { id: 'chat', name: 'AI Chat', icon: MessageSquare },
   { id: 'diff', name: 'Modify Diff', icon: GitCompare },
   { id: 'requirement', name: 'Prompt', icon: FileText },
-  { id: 'indexes', name: 'Indexes', icon: Zap },
-  { id: 'versions', name: 'Versions', icon: History }
+  { id: 'indexes', name: 'Indexes', icon: Zap }
 ];
 
 export default function Workspace() {
@@ -70,8 +66,7 @@ export default function Workspace() {
     chat: 'Completed',
     review: 'Completed',
     requirement: 'Completed',
-    indexes: 'Completed',
-    versions: 'Completed'
+    indexes: 'Completed'
   });
 
   useEffect(() => {
@@ -276,6 +271,15 @@ export default function Workspace() {
             </div>
 
             <button
+              onClick={() => navigate(`/ai-code?importDbId=${projectId}`)}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-lg shadow-purple-600/30 transition"
+              title="Generate full application code from this database design in AI Code"
+            >
+              <Code2 className="w-3.5 h-3.5" />
+              <span>Open in AI Code</span>
+            </button>
+
+            <button
               onClick={() => setIsExportOpen(true)}
               className="px-3.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 transition"
             >
@@ -295,7 +299,7 @@ export default function Workspace() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center space-x-1 bg-[#111827] border border-gray-800 rounded-xl p-1.5 overflow-x-auto text-xs font-medium">
+        <div className="grid grid-cols-11 gap-1 w-full bg-[#111827] border border-gray-800 rounded-xl p-1.5 text-xs font-medium">
           {STAGES.map((stg) => {
             const Icon = stg.icon;
             const status = stageStatuses[stg.id] || 'Completed';
@@ -305,16 +309,16 @@ export default function Workspace() {
               <button
                 key={stg.id}
                 onClick={() => setActiveTab(stg.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+                className={`flex items-center justify-center space-x-1.5 px-1.5 py-2 rounded-lg transition whitespace-nowrap ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 font-semibold'
                     : 'text-gray-400 hover:text-white hover:bg-gray-800/60'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-indigo-400'}`} />
+                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-indigo-400'}`} />
                 <span>{stg.name}</span>
                 {status === 'Outdated' && (
-                  <span className="w-2 h-2 bg-amber-400 rounded-full" title="Outdated - Regeneration Required" />
+                  <span className="w-2 h-2 bg-amber-400 rounded-full shrink-0" title="Outdated - Regeneration Required" />
                 )}
               </button>
             );
@@ -409,14 +413,6 @@ export default function Workspace() {
               onApplyIndex={(rec) => {
                 console.log('Applied index to SQL configuration:', rec);
               }}
-            />
-          )}
-
-          {activeTab === 'versions' && (
-            <VersionHistory
-              projectId={projectId}
-              versions={project?.versions || []}
-              onVersionRestored={loadProjectData}
             />
           )}
         </div>

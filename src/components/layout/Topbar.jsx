@@ -1,14 +1,38 @@
-import React from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Bell, Sun, Moon } from 'lucide-react';
 
 export default function Topbar({ title, search, onSearchChange }) {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('devforge_theme') !== 'light';
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+      document.body.classList.add('dark');
+      document.body.classList.remove('light');
+      localStorage.setItem('devforge_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+      document.body.classList.remove('dark');
+      document.body.classList.add('light');
+      localStorage.setItem('devforge_theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
   return (
     <header className="h-16 bg-[#111827] border-b border-gray-800/80 px-6 flex items-center justify-between text-xs flex-shrink-0">
       <div className="flex items-center space-x-4">
         <h1 className="text-base font-bold text-white tracking-tight">{title || 'AI Database Designer'}</h1>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3">
         {onSearchChange !== undefined && (
           <div className="relative w-64">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
@@ -22,11 +46,27 @@ export default function Topbar({ title, search, onSearchChange }) {
           </div>
         )}
 
-        <div className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 cursor-pointer relative">
+        {/* Notification Bell */}
+        <div className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 cursor-pointer relative transition" title="Notifications">
           <Bell className="w-4 h-4" />
           <span className="w-2 h-2 bg-indigo-500 rounded-full absolute top-1.5 right-1.5" />
         </div>
 
+        {/* Dark / Light Mode Button */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 cursor-pointer transition flex items-center justify-center"
+          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          aria-label="Toggle dark or light mode"
+        >
+          {isDarkMode ? (
+            <Sun className="w-4 h-4 text-amber-400 transition-transform duration-200 hover:scale-110" />
+          ) : (
+            <Moon className="w-4 h-4 text-indigo-400 transition-transform duration-200 hover:scale-110" />
+          )}
+        </button>
+
+        {/* User Profile Badge */}
         <div className="flex items-center space-x-2 pl-2 border-l border-gray-800">
           <div className="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-300 font-bold font-mono">
             DA

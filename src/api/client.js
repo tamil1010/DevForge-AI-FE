@@ -116,4 +116,36 @@ export const versionApi = {
   deleteVersion: (projectId, versionNumber) => api.delete(`/versions/${projectId}/${versionNumber}`)
 };
 
+export const codeProjectApi = {
+  analyzeRequirement: (data) => api.post('/code-projects/analyze-requirement', data),
+  getCodeByDbProjectId: (dbProjectId) => api.get(`/code-projects/by-db-project/${dbProjectId}`),
+  generateForDbProject: (data) => api.post('/code-projects/generate-for-db-project', data),
+  getProjects: () => api.get('/code-projects'),
+  getProject: (id) => api.get(`/code-projects/${id}`),
+  createProject: (data) => api.post('/code-projects', data),
+  updateProject: (id, data) => api.put(`/code-projects/${id}`, data),
+  deleteProject: (id) => api.delete(`/code-projects/${id}`),
+  duplicateProject: (id) => api.post(`/code-projects/${id}/duplicate`),
+  saveFile: (id, data) => api.post(`/code-projects/${id}/files`, data),
+  importDatabaseSchema: (id, data) => api.post(`/code-projects/${id}/import-database`, data),
+  generateCrud: (id, data) => api.post(`/code-projects/${id}/generate-crud`, data),
+  generateApi: (id, data) => api.post(`/code-projects/${id}/generate-api`, data),
+  generateAuth: (id, data) => api.post(`/code-projects/${id}/generate-auth`, data),
+  debugCode: (id, data) => api.post(`/code-projects/${id}/debug`, data),
+  modifyCode: (id, data) => api.post(`/code-projects/${id}/modify`, data),
+  reviewCode: (id) => api.get(`/code-projects/${id}/review`),
+  generateTests: (id) => api.post(`/code-projects/${id}/generate-tests`),
+  optimizeCode: (id, data) => api.post(`/code-projects/${id}/optimize`, data),
+  explainCode: (id, data) => api.post(`/code-projects/${id}/explain`, data),
+  getDocs: (id) => api.get(`/code-projects/${id}/docs`),
+  scanSecurity: (id) => api.get(`/code-projects/${id}/security-scan`),
+  scanDependencies: (id) => api.get(`/code-projects/${id}/dependencies`),
+  getChatHistory: (id) => api.get(`/code-projects/${id}/chats`),
+  sendChatMessage: (id, data) => api.post(`/code-projects/${id}/chats`, data),
+  getVersions: (id) => api.get(`/code-projects/${id}/versions`),
+  createVersion: (id, data) => api.post(`/code-projects/${id}/versions`, data),
+  restoreVersion: (id, versionNumber) => api.post(`/code-projects/${id}/versions/${versionNumber}/restore`),
+  exportProject: (id) => api.get(`/code-projects/${id}/export`)
+};
+
 export default api;
