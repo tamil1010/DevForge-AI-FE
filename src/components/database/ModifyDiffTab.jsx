@@ -107,16 +107,16 @@ export default function ModifyDiffTab({ projectId, onNavigateTab }) {
         <div>
           <h3 className="text-base font-bold text-white">No AI Modifications Recorded Yet</h3>
           <p className="text-xs text-gray-400 max-w-md mx-auto mt-1">
-            Run an <strong className="text-purple-400">AI Review</strong> and click <strong className="text-emerald-400">Modify</strong> to generate a side-by-side Before & After comparison.
+            Run an <strong className="text-purple-400">AI Chat Audit</strong> and click <strong className="text-emerald-400">Modify</strong> to generate a side-by-side Before & After comparison.
           </p>
         </div>
         <div>
           <button
-            onClick={() => onNavigateTab && onNavigateTab('review')}
+            onClick={() => onNavigateTab && onNavigateTab('chat')}
             className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-medium inline-flex items-center space-x-2 transition cursor-pointer shadow-lg shadow-purple-600/30"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Go to AI Review</span>
+            <span>Go to AI Chat</span>
           </button>
         </div>
       </div>
