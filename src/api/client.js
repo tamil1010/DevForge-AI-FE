@@ -148,4 +148,30 @@ export const codeProjectApi = {
   exportProject: (id) => api.get(`/code-projects/${id}/export`)
 };
 
+
+export const codeArenaApi = {
+  getDashboard: () => api.get('/codearena/dashboard'),
+  getProblems: (params) => api.get('/codearena/problems', { params }),
+  getProblem: (id) => api.get('/codearena/problems/' + id),
+  runCode: (data) => api.post('/codearena/run', data),
+  submitCode: (data) => api.post('/codearena/submit', data),
+  getSubmissions: (params) => api.get('/codearena/submissions', { params }),
+  getContests: () => api.get('/codearena/contests'),
+  getContest: (id) => api.get('/codearena/contests/' + id),
+  registerContest: (id) => api.post('/codearena/contests/' + id + '/register'),
+  getContestLeaderboard: (id) => api.get('/codearena/contests/' + id + '/leaderboard'),
+  getLeaderboard: (params) => api.get('/codearena/leaderboard', { params }),
+  getProfile: (userId) => api.get('/codearena/profile' + (userId ? '/' + userId : '')),
+  aiAssist: (data) => api.post('/codearena/ai-assist', data),
+  getEditorial: (id, isContest) => api.get('/codearena/problems/' + id + '/editorial' + (isContest ? '?isContest=true' : '')),
+  getDiscussions: (id) => api.get('/codearena/problems/' + id + '/discussions'),
+  createDiscussion: (id, data) => api.post('/codearena/problems/' + id + '/discussions', data),
+  addComment: (id, data) => api.post('/codearena/discussions/' + id + '/comments', data),
+  upvoteDiscussion: (id) => api.post('/codearena/discussions/' + id + '/upvote'),
+  adminCreateProblem: (data) => api.post('/codearena/admin/problems', data),
+  adminUpdateProblem: (id, data) => api.put('/codearena/admin/problems/' + id, data),
+  adminDeleteProblem: (id) => api.delete('/codearena/admin/problems/' + id),
+  adminCreateContest: (data) => api.post('/codearena/admin/contests', data)
+};
+
 export default api;

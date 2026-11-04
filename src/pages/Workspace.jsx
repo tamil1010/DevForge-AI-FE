@@ -30,6 +30,8 @@ import {
   ArrowLeft,
   RefreshCw,
   GitCompare,
+  MessageSquare,
+  Code2,
 } from 'lucide-react';
 
 const STAGES = [

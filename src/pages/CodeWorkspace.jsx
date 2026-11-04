@@ -844,7 +844,7 @@ export default function CodeWorkspace() {
             <div className="flex-1 p-6 overflow-y-auto space-y-4">
               <h3 className="text-sm font-bold text-white">AI Security Vulnerability Audit</h3>
               <div className="space-y-3">
-                {securityResult.vulnerabilities.map(v => (
+                {(Array.isArray(securityResult.vulnerabilities) ? securityResult.vulnerabilities : []).map(v => (
                   <div key={v.id} className="bg-[#0e1320] border border-gray-800 p-4 rounded-xl space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="px-2 py-0.5 bg-red-950 text-red-300 text-[10px] font-mono rounded">{v.severity}</span>
